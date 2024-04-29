@@ -1,0 +1,25 @@
+---
+- name: Install RISCV-GNU-Toolchain
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Clone RISCV-GNU-Toolchain repository
+      git:
+        repo: https://github.com/pulp-platform/riscv-gnu-toolchain.git
+        dest: ~/Desktop/kurulum/riscv-gnu-toolchain
+        recursive: yes
+
+    - name: Configure RISCV-GNU-Toolchain
+      shell: |
+        cd /Desktop/kurulum/riscv-gnu-toolchain
+        ./configure --prefix=/opt/riscv --with-arch=rv32imc --with-cmodel=medlow --enable-multilib
+
+    - name: Build RISCV-GNU-Toolchain
+      shell: make
+      args:
+        chdir: ~/Desktop/kurulum/riscv-gnu-toolchain
+
+    - name: Add environment variables to .bashrc
+      template:
+        src: bashrc_template.j2
+        dest: ~/.bashrc
