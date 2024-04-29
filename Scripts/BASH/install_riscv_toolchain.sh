@@ -2,10 +2,12 @@
 
 InstallationPath=~/Desktop/GNUToolchain
 
+#PreSteps:
 #Creating Installation Folder
 mkdir $InstallationPath
 
 #Creating Config Foldure
+mkdir $InstallationPath/opt
 mkdir $InstallationPath/opt/riscv
 
 # Step 1: Navigate to the folder where you want to download RISCV-GNU-Toolchain’s installation files
