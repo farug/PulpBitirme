@@ -2,24 +2,52 @@
 - name: Install RISCV-GNU-Toolchain
   hosts: localhost
   become: yes
+  vars:
+    installation_path: "~/Desktop/GNUToolchain"
+    git_repository: "https://github.com/pulp-platform/riscv-gnu-toolchain.git"
+
   tasks:
-    - name: Clone RISCV-GNU-Toolchain repository
+    - name: PreSteps: Creating Installation Folder
+      file:
+        path: "{{ installation_path }}"
+        state: directory
+
+    - name: PreSteps: Creating Config Folder
+      file:
+        path: "{{ installation_path }}/opt/riscv"
+        state: directory
+
+    - name: Step 1: Navigate to the installation folder
+      become_user: "{{ ansible_user }}"
+      shell: "cd {{ installation_path }}"
+      args:
+        executable: /bin/bash
+
+    - name: Step 2: Clone the RISCV-GNU-Toolchain repository
+      become_user: "{{ ansible_user }}"
       git:
-        repo: https://github.com/pulp-platform/riscv-gnu-toolchain.git
-        dest: ~/Desktop/kurulum/riscv-gnu-toolchain
+        repo: "{{ git_repository }}"
+        dest: "{{ installation_path }}/riscv-gnu-toolchain"
         recursive: yes
 
-    - name: Configure RISCV-GNU-Toolchain
+    - name: Step 3: Configure and make the toolchain
+      become_user: "{{ ansible_user }}"
       shell: |
-        cd /Desktop/kurulum/riscv-gnu-toolchain
-        ./configure --prefix=/opt/riscv --with-arch=rv32imc --with-cmodel=medlow --enable-multilib
-
-    - name: Build RISCV-GNU-Toolchain
-      shell: make
+        cd "{{ installation_path }}/riscv-gnu-toolchain"
+        ./configure --prefix="{{ installation_path }}/opt/riscv" --with-arch=rv32imc --with-cmodel=medlow --enable-multilib
+        make
       args:
-        chdir: ~/Desktop/kurulum/riscv-gnu-toolchain
+        executable: /bin/bash
 
-    - name: Add environment variables to .bashrc
-      template:
-        src: bashrc_template.j2
-        dest: ~/.bashrc
+    - name: Step 4: Add environment variables to .bashrc
+      lineinfile:
+        path: "~/.bashrc"
+        line: "{{ item }}"
+        insertafter: EOF
+      loop:
+        - "export PULP_RISCV_GCC_TOOLCHAIN={{ installation_path }}/opt/riscv"
+        - "export PATH=\$PULP_RISCV_GCC_TOOLCHAIN/bin:\$PATH"
+
+    - name: Print completion message
+      debug:
+        msg: "Installation completed successfully."
