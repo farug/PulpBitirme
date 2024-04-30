@@ -14,7 +14,8 @@ mkdir $InstallationPath/opt/riscv
 cd $InstallationPath || exit
 
 # Step 2: Clone the RISCV-GNU-Toolchain repository
-git clone --recursive https://github.com/pulp-platform/riscv-gnu-toolchain.git || exit
+git clone --recursive https://github.com/pulp-platform/pulp-riscv-gnu-toolchain || exit
+
 
 # Step 3: Navigate inside the cloned folder and configure, make the toolchain
 cd riscv-gnu-toolchain || exit
