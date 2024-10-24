@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sshpass -p 1111 ssh pulp@192.168.1.13 'bash -s' < install_riscv_toolchain.sh > toolchain.log
+sshpass -p 1111 ssh pulp@192.168.1.13 'bash -s' < install_riscv_toolchain.sh
 exit
 sshpass -p 1111 ssh pulp@192.168.1.13 'bash -s' < PULPissimo.sh > PULP.log
 exit
